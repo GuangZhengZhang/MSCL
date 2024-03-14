@@ -5,7 +5,7 @@ project(MSCL_Example_Wireless_CPP LANGUAGES CXX)
 add_executable(${PROJECT_NAME} main.cpp)
 
 # Append to the module path so we can use the FindMSCL.cmake script
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../cmake")
+#list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../cmake")
 
 if(CMAKE_PROJECT_NAME STREQUAL "MSCL")
   # NOTE: This section will only be called if this CMakeLists.txt is imported during the MSCL build.
@@ -16,18 +16,29 @@ if(CMAKE_PROJECT_NAME STREQUAL "MSCL")
   add_dependencies(${PROJECT_NAME} MSCL_Static)
 endif()
 
-find_package(MSCL REQUIRED)
+#find_package(MSCL REQUIRED)
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${MSCL_INCLUDE_DIRS}
+find_package(Boost REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem date_time)
+find_package(OpenSSL REQUIRED)
+
+include_directories(
+	${Boost_INCLUDE_DIRS}
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_SOURCE_DIR}/MSCL/include
 )
-target_link_libraries(${PROJECT_NAME} ${MSCL_LIBRARIES})
+
+#target_include_directories(${PROJECT_NAME} PRIVATE
+ # ${CMAKE_CURRENT_SOURCE_DIR}
+  #${MSCL_INCLUDE_DIRS}
+#)
+set(libmscl ${CMAKE_SOURCE_DIR}/MSCL/lib/x64/Release/MSCL.lib)
+target_link_libraries(${PROJECT_NAME} ${libmscl})
 
 # Don't let MSCL find it's own libraries
 target_compile_definitions(${PROJECT_NAME} PRIVATE BOOST_ALL_NO_LIB)
 
 if(MSVC)
   # On windows, we need to set the runtime library to the same as MSCL
-  target_compile_options(${PROJECT_NAME} PRIVATE /MT$<$<CONFIG:Debug>:d>)
+  #target_compile_options(${PROJECT_NAME} PRIVATE /MT$<$<CONFIG:Debug>:d>)
 endif()

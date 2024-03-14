@@ -14,19 +14,19 @@ using namespace std;
 int main(int argc, char **argv)
 {
     //TODO: change these constants to match your setup
-    const string COM_PORT = "COM3";
-    const int NODE_ADDRESS = 65364;
+    const string COM_PORT = "COM12";
+    const int NODE_ADDRESS = 45954;
 
     try
     {
         //create a SerialConnection with the COM port
-        mscl::Connection connection = mscl::Connection::Serial(COM_PORT);
+        mscl::Connection connection = mscl::Connection::Serial("COM12", 3000000);
 
         //create a BaseStation with the SerialConnection
         mscl::BaseStation baseStation(connection);
 
         //create a WirelessNode with the BaseStation
-        mscl::WirelessNode node(NODE_ADDRESS, baseStation);
+        mscl::WirelessNode node(45954, baseStation);
 
         //TODO: add as many other WirelessNode objects here as you want (used in the startSyncSampling example)
         std::vector<mscl::WirelessNode> networkNodes;
@@ -35,13 +35,14 @@ int main(int argc, char **argv)
         //due to the nature of wireless devices, it is possible to lose packets over the air.
         //MSCL has a built in way of performing retries whenever an eeprom address is attempted to be read.
         //By default, this value is set to 0. You may wish to keep it at 0 and handle retries yourself depending on your application.
+        //baseStation.clearEepromCache();
         baseStation.readWriteRetries(3);
         node.readWriteRetries(3);
 
         //TODO: Uncomment the lines below to run the examples
 
         //Example: Ping Node
-        //pingNode(node);
+        pingNode(node);
 
         //Example: Get Configuration
         //getCurrentConfig(node);
@@ -53,7 +54,7 @@ int main(int argc, char **argv)
         //startSyncSampling(baseStation, networkNodes);
 
         //Example: Set to Idle
-        //setToIdle(node);
+        setToIdle(node);
 
         //Example: Parse Data
         //parseData(baseStation);
